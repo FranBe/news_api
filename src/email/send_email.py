@@ -34,7 +34,7 @@ def send_email(message):
     msg["from"] = sender_email
     msg["subject"] = "Test Message News API"
     msg.set_content(message)
-    msg.add_alternative(html, subtype="html")
+    #msg.add_alternative(html, subtype="html")
 
     print(msg)
 

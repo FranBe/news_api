@@ -5,10 +5,11 @@
 import requests
 from dotenv import load_dotenv
 import os
+from time import strftime,gmtime
 
 # Import config
-from config.config import Config
-
+from config import Config
+from src.email.send_email import send_email
 #****************************************************************
 #                       Preconfiguration
 #****************************************************************
@@ -31,48 +32,49 @@ base_url = mi_config.url
 
 main = "everything"
 country = "us"
-source = "bbc-news"
-subject="el niño"
-date_from="2026-09-20"
-sort_by="popularity"
-rest_url = f"everything?q={subject}&from={date_from}&sortBy={sort_by}&apiKey={NEWS_API_KEY}"
+sources = "bbc-news"
+topic="el niño"
+language = 'en'
+domains = 'bbc.co.uk'
+
+
+date_format = f"%Y-%m-%{gmtime().tm_mday -1}"
+date_from = strftime(date_format, gmtime())
+
+sort_by="publishedAt"
+rest_url = f"everything?q={topic}&from={date_from}&sortBy={sort_by}&language={language}&domains={domains}&sources={sources}&apiKey={NEWS_API_KEY}"
 
 # Request
 full_url = base_url + rest_url
-print(full_url)
 
-"""
-try:
-    r = requests.get(full_url)
-except requests.exceptions.Timeout:
-    # Maybe set up for a retry, or continue in a retry loop
-    print("Timeout error!")
-except requests.exceptions.TooManyRedirects:
-    # Tell the user their URL was bad and try a different one
-    print("TooManyRedirects!")
-except requests.exceptions.RequestException as e:
-    # catastrophic error. bail.
-    raise SystemExit(e)
+def RetrieveNews():
+    try:
+        r = requests.get(full_url)
+    except requests.exceptions.Timeout:
+        # Maybe set up for a retry, or continue in a retry loop
+        print("Timeout error!")
+    except requests.exceptions.TooManyRedirects:
+        # Tell the user their URL was bad and try a different one
+        print("TooManyRedirects!")
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. bail.
+        raise SystemExit(e)
 
-
-content = r.json()
-
-for article in content["articles"]:
-    print(article["title"])
-    print("------------------------")
-    print(article["description"])
-    print("***********************")
-
-
-
-# Access the article titles and description
-body = ""
-for article in content["articles"]:
-    if article["title"] is not None:
-        body = body + article["title"] + "\n" + str(article["description"]) + 2*"\n"
-
-body = body.encode("utf-8")
-send_email(message=body)
+    content = r.json()
+    # Access the article titles and description
+    body = ""
+    for article in content["articles"][:20]:
+        if article["title"] is not None:
+            body = (
+                body
+                + article["title"]
+                + "\n"
+                + article["description"]
+                + 2 * "\n"
+                + "URL: " + article["url"]
+                + 3 * "\n"
+        )
 
 
-"""
+    #print(body)
+    send_email(body)
