@@ -1,3 +1,10 @@
 # Files
 
 .env
+config.ini
+
+# Folders
+
+*/.venv
+*/news_api.egg-info
+*/__pycache__
