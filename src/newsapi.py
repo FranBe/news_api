@@ -6,19 +6,24 @@ import requests
 from dotenv import load_dotenv
 import os
 
+# Import config
+from config.config import Config
+
 #****************************************************************
 #                       Preconfiguration
 #****************************************************************
 
-# Initializing dotenv
+# Initializing dotenv and Config
 load_dotenv()
+mi_config = Config()
+
 
 # Loading environment variables
-API_KEY = os.getenv('API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 # Base URL
 
-base_url = "https://newsapi.org/v2/"
+base_url = mi_config.url
 
 #****************************************************************
 #                       Program
@@ -30,11 +35,13 @@ source = "bbc-news"
 subject="el niño"
 date_from="2026-09-20"
 sort_by="popularity"
-rest_url = f"everything?q={subject}&from={date_from}&sortBy={sort_by}&apiKey={API_KEY}"
+rest_url = f"everything?q={subject}&from={date_from}&sortBy={sort_by}&apiKey={NEWS_API_KEY}"
 
 # Request
 full_url = base_url + rest_url
+print(full_url)
 
+"""
 try:
     r = requests.get(full_url)
 except requests.exceptions.Timeout:
@@ -55,3 +62,17 @@ for article in content["articles"]:
     print("------------------------")
     print(article["description"])
     print("***********************")
+
+
+
+# Access the article titles and description
+body = ""
+for article in content["articles"]:
+    if article["title"] is not None:
+        body = body + article["title"] + "\n" + str(article["description"]) + 2*"\n"
+
+body = body.encode("utf-8")
+send_email(message=body)
+
+
+"""
