@@ -16,6 +16,8 @@ from src.email.send_email import send_email
 
 # Initializing dotenv and Config
 load_dotenv()
+load_dotenv('.env.params')
+
 mi_config = Config()
 
 
@@ -30,22 +32,28 @@ base_url = mi_config.url
 #                       Program
 #****************************************************************
 
-main = "everything"
-country = "us"
-sources = "bbc-news"
-topic="el niño"
-language = 'en'
-domains = 'bbc.co.uk'
+main = os.getenv('MAIN','everything')
+country = os.getenv('COUNTRY','us')
+sources = os.getenv('SOURCES')
+topic = os.getenv('TOPIC')
+language = 'en'#os.getenv('LANGUAGE','en')
+domains = os.getenv('DOMAINS')
+
+# Retrieve the last news (remember it is always from yesterday in the API free version) as default
+date_format = f"%Y-%m-{gmtime().tm_mday -1}"
+date_from_default = strftime(date_format, gmtime())
+date_from = os.getenv('DATE_FROM',date_from_default)
 
 
-date_format = f"%Y-%m-%{gmtime().tm_mday -1}"
-date_from = strftime(date_format, gmtime())
+
+
 
 sort_by="publishedAt"
 rest_url = f"everything?q={topic}&from={date_from}&sortBy={sort_by}&language={language}&domains={domains}&sources={sources}&apiKey={NEWS_API_KEY}"
 
 # Request
 full_url = base_url + rest_url
+print(full_url)
 
 def RetrieveNews():
     try:
@@ -75,6 +83,8 @@ def RetrieveNews():
                 + 3 * "\n"
         )
 
+    #if (body == ""):
+    #    body = "There is no results... check the params"
 
-    #print(body)
-    send_email(body)
+    print(body)
+    #send_email(body)

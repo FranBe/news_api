@@ -8,3 +8,4 @@ config.ini
 */.venv
 */news_api.egg-info
 __pycache__/
+*pycache__/
