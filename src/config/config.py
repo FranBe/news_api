@@ -5,9 +5,9 @@ import os
 class Config:
 
     def __init__(self):
-        self.project_root = Path(__file__).resolve().parent.parent
+        self.project_root = Path(__file__).resolve().parent.parent.parent
 
-        self.config_file = self.project_root / "config.ini"
+        self.config_file = self.project_root / "config" / "config.ini"
 
         self.parser = configparser.ConfigParser()
         self.parser.read(self.config_file)

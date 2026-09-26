@@ -1,6 +1,6 @@
 import smtplib, ssl
 from email.message import EmailMessage
-from config import Config
+from config.config import Config
 from dotenv import load_dotenv 
 import os
 from pathlib import Path

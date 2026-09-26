@@ -6,5 +6,5 @@
 
 */.venv
 */news_api.egg-info
-__pycache__/
-*pycache__/
+*/__pycache__/
+*__pycache__/

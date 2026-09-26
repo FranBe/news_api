@@ -8,8 +8,8 @@ import os
 from time import strftime,gmtime
 
 # Import config
-from config import Config
-from src.email.send_email import send_email
+from config.config import Config
+from mailing.send_email import send_email
 #****************************************************************
 #                       Preconfiguration
 #****************************************************************
@@ -52,6 +52,7 @@ rest_url = f"everything?q='{topic}'&from='{date_from}'&sortBy={sort_by}&language
 
 # Request
 full_url = base_url + rest_url
+print(f"FullURL: {full_url}")
 
 def RetrieveNews():
     try:
@@ -82,8 +83,8 @@ def RetrieveNews():
                 + 3 * "\n"
         )
 
-    #if (body == ""):
-    #    body = "There is no results... check the params"
+    if (body == ""):
+        body = "There is no results... check the params"
 
     print(body)
     #send_email(body)
