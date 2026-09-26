@@ -12,7 +12,20 @@ class Config:
         self.parser = configparser.ConfigParser()
         self.parser.read(self.config_file)
 
+    # General
+    @property
+    def debug(self):
+        return self.parser.get("general", "debug")
 
+    @property
+    def log_path(self):
+        return self.parser.getint("general", "log_path")
+
+    @property
+    def log_level(self):
+        return self.parser.get("general", "log_level")
+
+    # Email
     @property
     def smtp_server(self):
         return self.parser.get("email", "smtp_server")
@@ -21,35 +34,7 @@ class Config:
     def smtp_port(self):
         return self.parser.getint("email", "smtp_port")
 
+    # News API
     @property
-    def recipients(self):
-        return self.parser.get("email", "recipients")
-
-    @property
-    def url(self):
-        return self.parser.get("news_api", "url")
-
-
-
-
-    """
-    def create_config(self, userName='username@mail.com', password='password',receivers=['receiver1@mail.com']):
-        config = configparser.ConfigParser()
-        # Add sections and key-value pairs
-        config['General'] = {
-            'debug': 'True',
-            'log_path': '/log',
-            'log_level': 'info'
-        }
-        config['Email'] = {
-            'smtp_server' : 'smtp.gmail.com',
-            'port' : '465',
-            'username': userName,
-            'password': password,
-            'receivers': receivers
-        }
-        # Write the configuration to a file
-        with open(self.configFile, 'w') as configfile:
-            config.write(configfile)
-
-    """
+    def base_url(self):
+        return self.parser.get("news_api", "base_url")

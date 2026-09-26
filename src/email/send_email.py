@@ -30,7 +30,7 @@ def send_email(message):
     html = get_html(project_root / 'templates/email.html')
 
     msg = EmailMessage()
-    msg["to"] = Config.recipients
+    msg["to"] = os.getenv('RECIPIENTS')
     msg["from"] = sender_email
     msg["subject"] = "Test Message News API"
     msg.set_content(message)

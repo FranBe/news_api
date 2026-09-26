@@ -16,7 +16,7 @@ from src.email.send_email import send_email
 
 # Initializing dotenv and Config
 load_dotenv()
-load_dotenv('.env.params')
+load_dotenv('.env.newsapi')
 
 mi_config = Config()
 
@@ -26,34 +26,32 @@ NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 # Base URL
 
-base_url = mi_config.url
+base_url = mi_config.base_url
 
 #****************************************************************
 #                       Program
 #****************************************************************
 
+# News API parameters
 main = os.getenv('MAIN','everything')
 country = os.getenv('COUNTRY','us')
-sources = os.getenv('SOURCES')
+sources = os.getenv('SOURCES','bbc-news')
 topic = os.getenv('TOPIC')
-language = 'en'#os.getenv('LANGUAGE','en')
-domains = os.getenv('DOMAINS')
+language = os.getenv('LANG_NEWS','en')
+domains = os.getenv('DOMAINS','bbc.co.uk')
+sort_by = os.getenv('')
+limit = int(os.getenv('LIMIT',20))
 
-# Retrieve the last news (remember it is always from yesterday in the API free version) as default
+# Retrieve the last news  as default (remember they're from yesterday since I'm using free version of the API)
 date_format = f"%Y-%m-{gmtime().tm_mday -1}"
 date_from_default = strftime(date_format, gmtime())
 date_from = os.getenv('DATE_FROM',date_from_default)
 
-
-
-
-
-sort_by="publishedAt"
-rest_url = f"everything?q={topic}&from={date_from}&sortBy={sort_by}&language={language}&domains={domains}&sources={sources}&apiKey={NEWS_API_KEY}"
+# Rest of URL with endpoints and parameters
+rest_url = f"everything?q='{topic}'&from='{date_from}'&sortBy={sort_by}&language={language}&domains='{domains}'&sources={sources}&apiKey={NEWS_API_KEY}"
 
 # Request
 full_url = base_url + rest_url
-print(full_url)
 
 def RetrieveNews():
     try:
@@ -69,9 +67,10 @@ def RetrieveNews():
         raise SystemExit(e)
 
     content = r.json()
+
     # Access the article titles and description
     body = ""
-    for article in content["articles"][:20]:
+    for article in content["articles"][:limit]:
         if article["title"] is not None:
             body = (
                 body
