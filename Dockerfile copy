@@ -18,7 +18,7 @@ ENV PATH="/root/.local/bin/:$PATH"
 # Setting working directory
 WORKDIR /app
 
-COPY . /app
+COPY . /app/
 
 RUN uv sync --frozen --no-install-project
 
@@ -26,8 +26,30 @@ RUN uv sync --frozen --no-install-project
 # Disable development dependencies
 ENV UV_NO_DEV=1
 
+
 RUN uv sync --locked
+
+
 
 CMD ["uv", "run", "python", "-m", "src.main"]
 
+#***************************************************************
+#                           Runtime
+#***************************************************************
+
+
+FROM python:3.12-slim AS runtime
+
+WORKDIR /app
+
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+
+# Copiar solamente el entorno virtual y la aplicación
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/config /app/config
+COPY --from=builder .env.newsapi /app
 

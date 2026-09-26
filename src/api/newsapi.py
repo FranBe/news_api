@@ -32,14 +32,14 @@ base_url = mi_config.base_url
 #                       Program
 #****************************************************************
 
-# News API parameters
+# News API with defaults parameters
 main = os.getenv('MAIN','everything')
 country = os.getenv('COUNTRY','us')
 sources = os.getenv('SOURCES','bbc-news')
 topic = os.getenv('TOPIC')
 language = os.getenv('LANG_NEWS','en')
 domains = os.getenv('DOMAINS','bbc.co.uk')
-sort_by = os.getenv('')
+sort_by = os.getenv('SORT_BY','publishedAt')
 limit = int(os.getenv('LIMIT',20))
 
 # Retrieve the last news  as default (remember they're from yesterday since I'm using free version of the API)
@@ -48,7 +48,7 @@ date_from_default = strftime(date_format, gmtime())
 date_from = os.getenv('DATE_FROM',date_from_default)
 
 # Rest of URL with endpoints and parameters
-rest_url = f"everything?q='{topic}'&from='{date_from}'&sortBy={sort_by}&language={language}&domains='{domains}'&sources={sources}&apiKey={NEWS_API_KEY}"
+rest_url = f"everything?q='{topic}'&from={date_from}&sortBy={sort_by}&language={language}&domains={domains}&sources={sources}&apiKey={NEWS_API_KEY}"
 
 # Request
 full_url = base_url + rest_url
@@ -68,7 +68,7 @@ def RetrieveNews():
         raise SystemExit(e)
 
     content = r.json()
-
+    print(content)
     # Access the article titles and description
     body = ""
     for article in content["articles"][:limit]:
