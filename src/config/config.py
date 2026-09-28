@@ -34,6 +34,10 @@ class Config:
     def smtp_port(self):
         return self.parser.getint("email", "smtp_port")
 
+    @property
+    def subject(self):
+        return self.parser.get("email", "subject")
+
     # News API
     @property
     def base_url(self):
