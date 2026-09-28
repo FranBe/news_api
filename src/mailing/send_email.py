@@ -4,10 +4,16 @@ from config.config import Config
 from dotenv import load_dotenv 
 import os
 from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+
+
 
 # Instantiate Config and environment variables
 Config = Config()
 load_dotenv()
+
+# Loading environment for jinja2
+env = Environment(loader=FileSystemLoader('%s/templates/' % os.path.dirname(__file__)))
 
 project_root = Path(__file__).resolve().parent
 
@@ -24,7 +30,7 @@ def send_email(message):
 
     sender_email = os.getenv('SMTP_USERNAME')
     sender_email_pass = os.getenv('SMTP_PASSWORD')
-    recipients = Config.recipients
+    recipients = os.getenv('RECIPIENTS')
 
     print(os.getcwd())
     html = get_html(project_root / 'templates/email.html')
@@ -34,17 +40,18 @@ def send_email(message):
     msg["from"] = sender_email
     msg["subject"] = "Test Message News API"
     msg.set_content(message)
-    #msg.add_alternative(html, subtype="html")
+    msg.add_alternative(html, subtype="html")
 
     print(msg)
 
-    context = ssl.create_default_context()
+    """
 
-    
+    context = ssl.create_default_context()
     try:
         with smtplib.SMTP_SSL(host, port, context=context) as server:
             server.login(sender_email, sender_email_pass)
             server.send_message(msg)
     except smtplib.SMTPResponseException as ex:
         print(f"Error {ex}")
+    """
     

@@ -52,9 +52,14 @@ rest_url = f"everything?q='{topic}'&from={date_from}&sortBy={sort_by}&language={
 
 # Request
 full_url = base_url + rest_url
-print(f"FullURL: {full_url}")
 
 def RetrieveNews():
+    """ Function for retrieving news from API and send them by email
+    """
+
+    # string variable for request final result
+    body = ""
+
     try:
         r = requests.get(full_url)
     except requests.exceptions.Timeout:
@@ -68,23 +73,32 @@ def RetrieveNews():
         raise SystemExit(e)
 
     content = r.json()
-    print(content)
-    # Access the article titles and description
-    body = ""
-    for article in content["articles"][:limit]:
-        if article["title"] is not None:
-            body = (
-                body
-                + article["title"]
-                + "\n"
-                + article["description"]
-                + 2 * "\n"
-                + "URL: " + article["url"]
-                + 3 * "\n"
-        )
 
-    if (body == ""):
-        body = "There is no results... check the params"
+     # Access the article titles and description when there isn't any error message from API
+    if content["status"] != "error":
+        for article in content["articles"][:limit]:
+            if article["title"] is not None:
+                body = (
+                    body
+                    + 2 * "\n"
+                    + article["publishedAt"]
+                    + "\n"
+                    + article["title"]
+                    + "\n"
+                    + article["description"]
+                    + 2 * "\n"
+                    + "URL: " + article["url"]
+                    + 2 * "\n"
+                    + 20 * "-" 
+
+            )
+    else:
+        body = (
+        "Error!"
+        + "\n" 
+        + "Code:" + content["code"]
+        + "\n" 
+        + "Message:" + content["message"])
 
     print(body)
-    #send_email(body)
+    send_email(body)
