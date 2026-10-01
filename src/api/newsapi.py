@@ -1,7 +1,6 @@
 #****************************************************************
 #                           Libraries
 #****************************************************************
-
 import requests
 from dotenv import load_dotenv
 import os
@@ -15,17 +14,16 @@ from mailing.send_email import send_email
 #****************************************************************
 
 # Initializing dotenv and Config
-load_dotenv()
-load_dotenv('.env.newsapi')
+load_dotenv() # General env variables
+load_dotenv('.env.newsapi') # Spescific env variables
 
-mi_config = Config()
+mi_config = Config() # General config variables
 
 
 # Loading environment variables
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 # Base URL
-
 base_url = mi_config.base_url
 
 #****************************************************************
@@ -53,23 +51,34 @@ rest_url = f"everything?q='{topic}'&from={date_from}&sortBy={sort_by}&language={
 # Request
 full_url = base_url + rest_url
 
-def RetrieveNews():
+def RetrieveNews(url:str):
     """ Function for retrieving news from API and send them by email
+
+    Args:
+        url(str): full url API with endpoints and parameters
+
+    Returns:
+        response: response requests object
     """
     try:
-        r = requests.get(full_url)
+        r = requests.get(url)
+        return r
     except requests.exceptions.Timeout:
         # Maybe set up for a retry, or continue in a retry loop
         print("Timeout error!")
+        return None
     except requests.exceptions.TooManyRedirects:
         # Tell the user their URL was bad and try a different one
         print("TooManyRedirects!")
+        return None
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
         raise SystemExit(e)
 
-    # Getting json
-    content = r.json()
 
-    # Passing json to send_email function
-    send_email(content)
+# Getting json
+#content = RetrieveNews(full_url)
+
+#print(content)
+# Passing json to send_email function
+#send_email(content)
