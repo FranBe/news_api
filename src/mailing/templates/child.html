@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if status == "ok" %}    
+        <h1>Noticias encontradas: {{ totalResults }}</h1>
+
+  
+        {% for article in articles %}
+        <article>
+            <h2>
+                <a href="{{ article.url }}">
+                    {{ article.title }} -  {{ article.publishedAt }}
+                </a>
+            </h2>
+
+            <p>
+                {{ article.description }}
+            </p>
+
+            <p>
+                Source: {{ article.source.name }}
+            </p>
+
+        </article>
+
+        <hr>
+
+        {% endfor %}
+
+    {% elif status == "error" %}
+
+    <h1>Error retrieving news...</h1>
+
+    <p>
+        <strong>Error code:</strong> {{ code }}
+    </p>
+
+    <p>
+        <strong>Message:</strong> {{ message }}
+    </p>
+
+    {% else %}
+
+    <h1>Unknown error</h1>
+
+    <p>
+        API returned with unknown state:
+        {{ status }}
+    </p>
+
+{% endif %}
+
+
+{% endblock %}
