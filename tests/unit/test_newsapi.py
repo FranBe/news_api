@@ -1,10 +1,16 @@
+#****************************************************************
+#                           Libraries
+#****************************************************************
+
 import unittest
 import requests
 from unittest.mock import patch
 
 from src.api import newsapi
 
-
+#****************************************************************
+#                           Class
+#****************************************************************
 class TestCheckURLs(unittest.TestCase):
 
     @patch("api.newsapi.requests.get")

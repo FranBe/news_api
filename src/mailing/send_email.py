@@ -1,3 +1,7 @@
+#****************************************************************
+#                           Libraries
+#****************************************************************
+
 import smtplib, ssl
 from email.message import EmailMessage
 from email.mime.text import MIMEText
@@ -10,6 +14,9 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 
+#****************************************************************
+#                           Preconfiguration
+#****************************************************************
 
 # Instantiate Config and environment variables
 Config = Config()
@@ -23,14 +30,16 @@ template = env.get_template("child.html")
 # Setting project root dir
 project_root = Path(__file__).resolve().parent
 
-def get_html(file:str):
-
-    with open(file,'r') as html:
-        return html.read()
+#****************************************************************
+#                          Functions
+#****************************************************************
 
 
 def send_email(message):
     """ Function for sending hmtl email to recipients
+
+    Args:
+        message(json): content json message
     """
     # Loading environment variables
     host = Config.smtp_server
@@ -49,13 +58,16 @@ def send_email(message):
     msg["from"] = sender_email
     msg["subject"] = subject
 
-    # Loading json content in 
+    # Loading json content in template
     html = template.render(**message)
 
+    # Loading html into email message
     msg.attach(MIMEText(html, "html", "utf-8"))
 
+    # Setting SSL context
     context = ssl.create_default_context()
     
+    # Sending message
     try:
         with smtplib.SMTP_SSL(host, port, context=context) as server:
             server.login(sender_email, sender_email_pass)
